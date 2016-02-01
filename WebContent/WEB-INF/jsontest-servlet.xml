@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:task="http://www.springframework.org/schema/task"  
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-4.1.xsd
+        http://www.springframework.org/schema/mvc
+  	http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+  	http://www.springframework.org/schema/tx  
+	http://www.springframework.org/schema/tx/spring-tx-4.1.xsd  
+	http://www.springframework.org/schema/aop  
+	http://www.springframework.org/schema/aop/spring-aop-4.1.xsd 
+        http://www.springframework.org/schema/task 
+        http://www.springframework.org/schema/task/spring-task-4.1.xsd
+       ">
+    
+    <!-- 启用spring mvc 注解 -->
+    <context:annotation-config/>
+    <!--扫描web包，应用Spring的注解 *代表是类 **类和包 -->
+	<!-- 扫描你所写的controller -->
+	<context:component-scan base-package="com.jsontest.controller" />
+	
+	<!-- 第一种配置ajax乱码，和json对象  开始 -->
+	<!-- <mvc:annotation-driven>
+		<mvc:message-converters>
+	        <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+	        	<constructor-arg name="defaultCharset" value="UTF-8" />     
+	            <property name="supportedMediaTypes">     
+	                <list>
+	                    <value>text/plain;charset=UTF-8</value>     
+	                    <value>text/html;charset=UTF-8</value>     
+	                </list>     
+	            </property>     
+	        </bean>      
+	    </mvc:message-converters>
+	</mvc:annotation-driven> -->
+	<!-- 第一种配置ajax乱码，和json对象  结束 -->
+	<!-- 开启定时任务 -->
+	<task:annotation-driven />
+	
+	<!--定义视图解析 prefix中的值是/WEB-INF/views/，少了/路径会出错-->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:viewClass="org.springframework.web.servlet.view.JstlView" 
+		p:prefix="/WEB-INF/views/"
+		p:suffix=".jsp" />
+	<!-- 第二种配置ajax乱码，和json对象  开始 -->
+	<!-- 这个是用来解决ajax返回的是对象，如果没配置，返回对象的时候报错了 -->
+	<bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
+	    <property name="supportedMediaTypes">  
+	        <list>  
+	            <value>application/json</value>  
+	        </list>  
+	    </property>  
+	</bean>
+	<!-- 这个是用来解决ajax返回字符串的时候去掉双引号，没有这个会有双引号，例如："林海彬" -->
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter" > 
+		<constructor-arg name="defaultCharset" value="UTF-8"/>
+	   <property name ="supportedMediaTypes">
+		    <list> 
+		    	<value>text/plain;charset=UTF-8</value>
+		    	<value>text/html;charset=UTF-8</value>
+			</list> 
+		</property> 
+	</bean>
+	<!-- 第二种解决ajax乱码问题，但是没起作用，因为跟 <mvc:annotation-driven>这个配置冲突，重复了-->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">  
+	    <property name="messageConverters">  
+	        <list>  
+	            <ref bean="jsonHttpMessageConverter" />
+	            <ref bean="stringHttpMessageConverter" />
+	        </list>  
+	    </property>  
+	</bean>
+	<!-- Enable annotation-based controllers using @Controller annotations -->
+	<bean id="annotationUrlMapping"  class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" /> -->
+	
+	<!-- 第二种配置ajax乱码，和json对象  结束 -->
+	
+	
+	<!-- 完成请求和注解POJO的映射 -->
+   <!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" /> -->
+ 	<!-- <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter"> 
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+                <value>text/html;charset=UTF-8</value>
+                <value>text/plain;charset=UTF-8</value>
+            </list>
+        </property>
+	</bean> -->
+
+	
+	<!-- 第三种配置ajax乱码，和json对象 开始 -->
+	<!--注解映射器 -->
+    <!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/> -->
+    <!--注解适配器 -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>application/json</value>
+						</list>
+					</property>
+				</bean>
+				<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+					<constructor-arg name="defaultCharset" value="UTF-8" />
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/plain;charset=UTF-8</value>
+							<value>text/html;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean> -->
+	<!-- 第三种配置ajax乱码，和json对象 结束 -->
+	<!-- 配置js,css等静态文件直接映射到对应的文件夹，不被DispatcherServlet处理 -->
+    <!-- <mvc:resources location="/WEB-INF/resources/**" mapping="/resources" /> -->
+</beans>
