@@ -33,6 +33,29 @@
 					}
 				});
 			});
+		
+		$("#ajaxUserListWithResponseList").click(function(){
+			var users = [];
+			var user1 = {id:1,name:'林海彬',age:12};
+			var user2 = {id:2,name:'lhb2',age:13};
+			users.push(user1);
+			users.push(user2);
+			var jsonStringRef = JSON.stringify(users);
+				$.ajax({
+					url:'${ctx }/ajaxUserListWithResponseList.do',
+					type:"POST",//默认是GET，如果是GET就会报错（400），必须是POST
+					dataType:"json",
+					data:jsonStringRef,
+					//contentType是配合@RequestBody使用的，controller层的参数没有@RequestBody就不要使用这个参数
+					contentType: "application/json",
+					success:function(data){
+						console.info(data);
+						layer.msg(data.age);
+					}
+				});
+			});
+		
+		
 		$("#ajaxUserEntityWithParam").click(function(){
 			var user1 = {
 					id:1,
@@ -259,6 +282,7 @@ $(function(){
 	<div>
 		<button id="ajaxUserEntity">ajaxUserEntity</button>
 		<button id="ajaxUserEntityWithParam">ajaxUserEntityWithParam</button>
+		<button id="ajaxUserListWithResponseList">ajaxUserListWithResponseList</button>
 		<button id="ajaxUserEntityWithResponse">ajaxUserEntityWithResponse</button>
 		<button id="ajaxUserEntityWithResponseList">ajaxUserEntityWithResponseList</button>
 		<button id="bt4">bt4</button>

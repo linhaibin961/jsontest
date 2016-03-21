@@ -80,7 +80,15 @@ public class UserController {
 		User user = userService.getUserById(user1.getId());
 		return user;
 	}
-
+	
+	@RequestMapping(value = "/ajaxUserListWithResponseList.do", method = RequestMethod.POST)
+	@ResponseBody
+	public User ajaxUserListWithResponseList(HttpServletRequest req, @RequestBody List<User> users) {
+		User user = null;
+		if (users.size() != 0)
+			user = users.get(0);
+		return user;
+	}
 	@RequestMapping(value = "/ajaxUserEntityWithResponseList.do", method = RequestMethod.POST)
 	@ResponseBody
 	public User ajaxUserEntityWithResponseList(HttpServletRequest req, @RequestBody User[] userList) {
